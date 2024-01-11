@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Заказ #{{ object.id }}</h1>
+    <ul>
+        {% for i in object.items.all %}
+        <li>{{ i.name }} - {{ i.price }} y.e.</li>
+        {% endfor %}
+    </ul>
+    {% if object.discount %}
+    <p>Скидка: {{ object.discount }}%</p>
+    {% endif %}
+    {% if object.tax %}
+    <p>Налог: {{ object.tax }}%</p>
+    {% endif %}
+    <h3>Итоговая стоимость: {{ object.total_price }} y.e.</h3>
+    <button type="button" onclick="getSessionId({{ object.id }})">Buy</button>
+</body>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    var stripe_public_key = `{{ stripe_public_key }}`;
+    var stripe = Stripe(stripe_public_key);
+
+    function getSessionId(productId) {
+        fetch(`/order/buy/${ productId }`, {})
+            .then(response => response.json())
+            .then(data => {
+                console.log('succ', data)
+                return stripe.redirectToCheckout({sessionId: data.session_id});
+            })
+            .catch((error) => {
+                console.log('err', error);
+            })
+    }
+</script>
+</html>
