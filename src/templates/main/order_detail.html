@@ -9,7 +9,7 @@
     <h1>Заказ #{{ object.id }}</h1>
     <ul>
         {% for i in object.items.all %}
-        <li>{{ i.name }} - {{ i.price }} y.e.</li>
+        <li>{{ i.name }} - {{ i.price }} {{ i.currency }}</li>
         {% endfor %}
     </ul>
     {% if object.discount %}
